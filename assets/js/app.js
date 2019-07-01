@@ -25,7 +25,7 @@ $("#add-train-btn").on("click", function(event) {
   // Grabs user input
   const trainName = $("#train-name-input").val().trim();
   const trainDest = $("#destination-input").val().trim();
-  const trainFirst = moment($("#first-input").val().trim()).format("HH:mm");
+  const trainFirst = $('#first-input').val().trim();
   const trainFreq = $("#frequency-input").val().trim();
 
   // Creates local "temporary" object for holding the train data
@@ -33,17 +33,18 @@ $("#add-train-btn").on("click", function(event) {
     name: trainName,
     destination: trainDest,
     first: trainFirst,
-    frequency: trainFreq
-  };
+    frequency: trainFreq,
+    dateAdded: firebase.database.ServerValue.TIMESTAMP
+    // Uploads train data to the database
+};
 
-  // Uploads train data to the database
-  database.ref().push(newTrain);
+database.ref().push(newTrain);
 
   // Logs everything to console
   console.log(trainName.name);
   console.log(trainDest.destination);
   console.log(trainFirst.first);
-  console.log(trainFirst.frequency);
+  console.log(trainFreq.frequency);
 
   alert("Train successfully added");
 
@@ -70,45 +71,23 @@ database.ref().on("child_added", function(childSnapshot) {
   console.log(trainFirst);
   console.log(trainFreq);
 
-//   // Prettify the train start
-//   let trainStartPretty = moment.unix(trainFirst).format("HH:mm");
-
-//   // Calculate the months worked using hardcore math
-//   // To calculate the months worked
-//   let empMonths = moment().diff(moment(trainFirst, "X"), "months");
-//   console.log(empMonths);
-
-//   // Calculate the total billed rate
-//   let empBilled = empMonths * empRate;
-//   console.log(empBilled);
-
-database.ref().on("child_added", function(childSnapshot) {
     let startTimeConverted = moment(childSnapshot.val().first, "hh:mm").subtract(1, "years");
     let timeDiff = moment().diff(moment(startTimeConverted), "minutes");
     let timeRemain = timeDiff % childSnapshot.val().frequency;
     let minToArrival = childSnapshot.val().frequency - timeRemain;
     let nextTrain = moment().add(minToArrival, "minutes");
-    // var key = childSnapshot.key;
+    nextTrain = moment(nextTrain).format("hh:mm");
 
   // Create the new row
   let newRow = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(trainDest),
     $("<td>").text(trainFreq),
-    // $("<td>").text(trainFirst),
     $("<td>").text(nextTrain),
     $("<td>").text(minToArrival)
   );
 
   // Append the new row to the table
   $("#tableBody").append(newRow);
-});
 
-// Example Time Math
-// -----------------------------------------------------------------------------
-// Assume Employee start date of January 1, 2015
-// Assume current date is March 1, 2016
-
-// We know that this is 15 months.
-// Now we will create code in moment.js to confirm that any attempt we use meets this test case
 })
