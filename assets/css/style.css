@@ -1,0 +1,9 @@
+.jumbotron {
+    background-image: url('../images/train-bg.jpg');
+    background-position: bottom;
+    background-size: 100%;
+    background-blend-mode: soft-light;
+}
+body {
+    /* background-image: url('../images/bgimage.png'); */
+}
